@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Page</title>
+</head>
+<body>
+    <div align="center">
+        <h2>Registration</h2>
+        <form action="/registration" method="post">
+            <label for="firstName">First Name:</label><br>
+            <input type="text" id="firstName" name="firstName" required><br><br>
+
+            <label for="secondName">Second Name:</label><br>
+            <input type="text" id="secondName" name="secondName" required><br><br>
+
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" required><br><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+
+            <p>{{.}}</p>
+            
+            <input type="submit" value="Register">
+            <button><a href="/auth/google/in" id="signIn">Sign Up with Google</a></button>
+            <button><a href="/auth/github/in" id="signIn">Sign In with Github</a></button>
+
+            <!-- <button><a href="/auth/google/register" id="signUp">Sign Up with Google</a></button>
+            <button><a href="/auth/github/register" id="signUp">Sign Up with Github</a></button> -->
+        </form>
+    </div>
+</body>
+</html>

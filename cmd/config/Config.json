@@ -1,0 +1,5 @@
+{
+    "address": ":8082",
+    "db_path": "./data/forum.db",
+    "db_driver": "sqlite3"
+}

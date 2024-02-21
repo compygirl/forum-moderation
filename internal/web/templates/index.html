@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login or Register</title>
+    <style>
+        .dropbtn {
+          background-color: #04AA6D;
+          color: white;
+          padding: 16px;
+          font-size: 16px;
+          border: none;
+        }
+        
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+        
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f1f1f1;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+        
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+        }
+        
+        .dropdown-content a:hover {background-color: #ddd;}
+        
+        .dropdown:hover .dropdown-content {display: block;}
+        
+        .dropdown:hover .dropbtn {background-color: #3e8e41;}
+        .frame {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px;
+        }
+
+        /* Border for individual post elements inside the frame */
+        .post {
+            border: 1px solid #171515;
+            border-radius: 1px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        /* Style for headings inside the post */
+        .post .title {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Style for meta information */
+        .post .meta {
+            font-size: 10px;
+            color: #777;
+        }
+
+        /* Style for entry content */
+        .post .entry {
+            margin-bottom: 10px;
+        }
+
+        /* Style for categories */
+        .post p span {
+            margin-right: 5px;
+            padding: 5px;
+            background-color: #f5f5f5;
+            color: #777;
+        }
+
+        /* Style for react buttons */
+        .post form input[type="submit"] {
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div align="center">
+        
+        <div class="dropdown">
+            <button class="dropbtn">Filter</button>
+            <div class="dropdown-content">
+              <a href="/">All</a>
+              {{range .AllCategories}}
+              <a href="/filter/{{.}}">{{.}}</a>
+              {{end}}
+              {{if .LoggedIn}}
+              <a href="/filter/CreatedPosts">Created Posts</a>
+              <a href="/filter/LikedPosts">Liked Posts</a>
+              {{end}}
+            </div>
+        </div> 
+        <br>
+        <br>
+        {{ if  .LoggedIn}}
+        <h2>Welcome </h2>
+        <button onclick="location.href='/logout'">Logout</button><br>
+        <br>
+
+
+        <form action="/moderator" method="post">
+            <!-- Include a hidden input field to submit user_id -->
+            <button class="moderator_btn" type="submit">Apply to be a Moderator</button>
+        </form>
+
+
+        <form action="/submit-post" enctype="multipart/form-data" method="post">
+            <label><input type="checkbox" name="preference" value="movie"> Movie </label>
+            <label><input type="checkbox" name="preference" value="game"> Game </label>
+            <label><input type="checkbox" name="preference" value="book"> Book </label>
+            <label><input type="checkbox" name="preference" value="others"> Others </label><br>
+            <br>
+            <label for="posttitle">Write your Post Title:</label><br>
+            <textarea id name="posttitle" rows="2" cols="50"></textarea><br>
+            <label for="postcontent">Write your Post Content:</label><br>
+            <textarea id="postcontent" name="postcontent" rows="4" cols="50"></textarea><br>
+            <input type="file" name="files" multiple>
+            <input type="submit" value="Submit">
+        </form>
+
+        
+        <br>
+        <div class="frame">
+            <div class="content">
+                {{range .AllPosts}}
+                <div class="post">
+                    <h1 class="title">{{.Title}}</h1>
+                    <p class="meta">
+                        <span class="date">Posted at: {{.CreatedTimeString}}</span>
+                        <span class="postedby">Posted by: {{.Username}}</span>
+                    </p>
+        
+                    {{if .ImagePath}}
+                        <img src="{{.ImagePath}}" alt="Image Description" width="300">
+                    {{end}}
+                    <div style="clear: both;">&nbsp;</div>
+                    <div class="entry">
+                        <h2>{{.Content}}</h2>
+                    </div>
+        
+                    <p>
+                        {{range .Categories}}
+                        <span>#{{.}}</span>
+                        {{end}}
+                    </p>
+        
+                    <form action="/post/react" method="POST" class="formsize">
+                        <input type="hidden" name="post_id" value="{{.PostID}}">
+                        <input type="hidden" name="type" value="1">
+                        <input type="submit" value="👍 {{.LikesCounter}}" class="hover" style="width: 100px;display:flex; float: center; cursor: pointer;background-color: #fff;color: black;">
+                    </form>
+                    
+                    <form action="/post/react" method="POST" class="formsize">
+                        <input type="hidden" name="post_id" value="{{.PostID}}">
+                        <input type="hidden" name="type" value="-1">
+                        <input type="submit" value="👎 {{.DislikeCounter}}" class="hover" style="width: 100px;display:flex; float: center; cursor: pointer;background-color: #fff;color: black;">
+                    </form>
+        
+                    <button onclick="location.href='/comments/{{.PostID}}'">Comments</button>
+                    <br>
+                    <br>
+                </div>
+                {{end}}
+            </div>
+        </div>
+        
+
+        {{else}}
+            <h2>Welcome Guest!</h2>
+            <p>Please select an option:</p>
+            <button onclick="location.href='/login'">Login</button>
+            <button onclick="location.href='/registration'">Register</button>
+            <br>
+            <br>
+            <div class = "content">
+                {{range .AllPosts}}
+                <div class = "post">
+                    <h1 class = "title">{{.Title}}</h1>
+                    <p class="meta"><span class="date">Posted at: {{.CreatedTimeString}}</span><span class="postedby">Posted by: {{.Username}}</span></p>
+                    {{if .ImagePath}}
+                        <img src="{{.ImagePath}}" alt="Image Description" width="300">
+                    {{end}}
+                    <div style="clear: both;">&nbsp;</div>
+                    <div class = "entry">
+                        <h2>{{.Content}}</h2>
+                    </div>
+
+                    <p>
+                        {{range .Categories}}
+                        <span>#{{.}}</span>
+                        {{end}}
+                    </p>
+                    <p><span>👍 {{.LikesCounter}}</span> <span>👎 {{.DislikeCounter}}</span></p>
+                    <button onclick="location.href='/comments/{{.PostID}}'">Comments</button>
+                </div>
+                {{end}}
+            </div>
+        {{end}}
+
+    </div>
+
+
+</body>
+</html>
