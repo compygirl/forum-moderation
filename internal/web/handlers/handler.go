@@ -39,6 +39,9 @@ func (handler *Handler) InitRouter() *http.ServeMux {
 	// mux.HandleFunc("/moderator", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.AdminLoginHandler))))
 
 	mux.HandleFunc("/admin_page", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.AdminMainPageHandler))))
-	mux.HandleFunc("/approve", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.ApproveModeratorHandler))))
+	mux.HandleFunc("/approve-reject", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.ApproveRejectModeratorHandler))))
+	mux.HandleFunc("/moderator_list", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.ManageModeratorsHandler))))
+	mux.HandleFunc("/delete_moderator", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.DeleteModeratorHandler))))
+
 	return mux
 }

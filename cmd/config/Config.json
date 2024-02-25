@@ -1,5 +1,5 @@
 {
-    "address": ":8082",
+    "address": ":8080",
     "db_path": "./data/forum.db",
     "db_driver": "sqlite3"
 }

@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"forum/internal/models"
 )
 
@@ -143,7 +142,6 @@ func (userObj *UserRepoImpl) GetUserRole(userID int) (string, error) {
 }
 
 func (userObj *UserRepoImpl) GetUserByRole(role string) ([]*models.User, error) {
-	fmt.Println("INSIDE THE REPO: ", role)
 	users := []*models.User{}
 	rows, err := userObj.db.Query("SELECT id, usernames, email FROM users WHERE role = ?", role)
 	if err != nil {

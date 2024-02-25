@@ -85,8 +85,8 @@ th {
 
 <nav>
   <ul>
-    <li><a class="active" href="/admin_page">Confirm Moderators Requests</a></li>
-    <li><a href="/moderator_list">Moderators</a></li>
+    <li><a href="/admin_page">Confirm Moderators Requests</a></li>
+    <li><a class="active" href="/moderator_list">Moderators</a></li>
     <li><a href="/change_posts">All Posts</a></li> 
     <li><a href="/create_categories">Create Categories</a></li>
   </ul>
@@ -101,28 +101,20 @@ th {
         <th>Email</th>
         <th>User ID</th>
         <th>Approve</th>
-        <th>Reject</th>
       </tr>
     </thead>
 
     <tbody>
-      {{range .AllRequests}}
+      {{range .AllModerators}}
       <tr>
         <td>{{.Username}}</td>
         <td>{{.Email}}</td>
         <td>{{.UserID}}</td>
         <td>
-          <form method="post" action="/approve-reject">
+          <form method="post" action="/delete_moderator">
             <input type="hidden" name="userId" value="{{.UserID}}">
-            <input type="hidden" name="action" value="approve">
-            <button class="approve-btn" type="submit">Approve</button>
-          </form>
-        </td>
-        <td>
-          <form method="post" action="/approve-reject">
-            <input type="hidden" name="userId" value="{{.UserID}}">
-            <input type="hidden" name="action" value="reject">
-            <button class="reject-btn" type="submit">Reject</button>
+            <!-- <input type="hidden" name="action" value="delete"> -->
+            <button class="reject-btn" type="submit">Delete Moderator</button>
           </form>
         </td>
       </tr>
