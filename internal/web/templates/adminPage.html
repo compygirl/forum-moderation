@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  margin: 0;
+  display: flex;
+}
+
+nav {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 25%;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+nav li a {
+  display: block;
+  color: #000;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+nav li a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+nav li a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+.content {
+  flex: 1;
+  padding: 16px;
+  margin-left: 25%; /* Adjust based on the width of your nav */
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #04AA6D;
+  color: white;
+}
+
+/* Style for buttons */
+.approve-btn, .reject-btn {
+  padding: 6px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reject-btn {
+  background-color: #f44336;
+  margin-left: 5px;
+}
+
+/* Style for hidden input fields */
+.hidden-input {
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <ul>
+    <li><a class="active" href="/admin_page">Confirm Moderators Requests</a></li>
+    <li><a href="/moderator_list">Moderators</a></li>
+    <li><a href="/change_posts">All Posts</a></li> 
+    <li><a href="/create_categories">Create Categories</a></li>
+  </ul>
+</nav>
+
+<!-- Add a container for your content with the "content" class -->
+<div class="content">
+  <table>
+    <thead>
+      <tr>
+        <th>Usernames</th>
+        <th>Email</th>
+        <th>User ID</th>
+        <th>Approve</th>
+        <th>Reject</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {{range .AllRequests}}
+      <tr>
+        <td>{{.Username}}</td>
+        <td>{{.Email}}</td>
+        <td>{{.UserID}}</td>
+        <td>
+          <form method="post" action="/approve">
+            <input type="hidden" name="userId" value="{{.UserID}}">
+            <input type="hidden" name="action" value="approve">
+            <button class="approve-btn" type="submit">Approve</button>
+          </form>
+        </td>
+        <td>
+          <form method="post" action="/reject">
+            <input type="hidden" name="userId" value="{{.UserID}}">
+            <input type="hidden" name="action" value="reject">
+            <button class="reject-btn" type="submit">Reject</button>
+          </form>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

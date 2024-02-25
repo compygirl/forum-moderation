@@ -33,10 +33,23 @@ func (h *Handler) ModeratorRequestHandler(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		fmt.Println("USERNAME: ", user.FirstName)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 
 	default:
 		helpers.ErrorHandler(w, http.StatusMethodNotAllowed, errors.New("Error in Moderator Request Handler"))
+		return
+	}
+}
+
+func (h *Handler) ApproveModeratorHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		r.ParseForm()
+		fmt.Println("Raw Form Data:", r.Form)
+		fmt.Println("USER ID: ", r.FormValue("userId"), "ACTUION: ", r.FormValue("action"))
+	default:
+		helpers.ErrorHandler(w, http.StatusMethodNotAllowed, errors.New("in Admin Page Handler"))
 		return
 	}
 }

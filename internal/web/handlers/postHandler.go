@@ -12,15 +12,16 @@ import (
 func (h *Handler) CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		cookie := helpers.SessionCookieGet(r)
 		const MaxImageSize = 20 * 1024 * 1024
+
+		cookie := helpers.SessionCookieGet(r)
 		if cookie == nil {
-			helpers.ErrorHandler(w, http.StatusUnauthorized, errors.New("Conversion of postID failed"))
+			helpers.ErrorHandler(w, http.StatusUnauthorized, errors.New("couldn't get the cookie in the Post Creation Handler"))
 			return
 		}
 		session, err := h.service.UserServiceInterface.GetSession(cookie.Value)
 		if err != nil {
-			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Conversion of postID failed"))
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Session failed in the Post Creation Handler"))
 			return
 		}
 

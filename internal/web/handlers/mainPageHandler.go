@@ -8,6 +8,7 @@ import (
 )
 
 func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
+	var user *models.User
 	if r.URL.Path != "/" {
 		helpers.ErrorHandler(w, http.StatusNotFound, errors.New(" "))
 		return
@@ -17,7 +18,7 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 		LoggedIn      bool
 		AllPosts      []*models.Post
 		AllCategories []string
-		// Role          string
+		User          *models.User
 	}
 
 	posts, err := h.service.PostServiceInterface.GetAllPosts()
@@ -25,6 +26,24 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 		helpers.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
+
+	// getting session for getting the user details:
+	cookie := helpers.SessionCookieGet(r)
+	if cookie != nil {
+		session, err := h.service.UserServiceInterface.GetSession(cookie.Value)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Session failed in the Main Handler"))
+			return
+		}
+
+		user, err = h.service.UserServiceInterface.GetUserByUserID(session.UserID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			return
+		}
+		// fmt.Println("INSIDE LOGGED: ", user)
+	}
+
 	for _, post := range posts {
 		// getting all categories
 		temp_categories, err := h.service.PostServiceInterface.GetCategories(post.PostID)
@@ -49,12 +68,14 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	// fmt.Println("ROLE inside : ", user)
 	indexPath := "internal/web/templates/index.html"
 	data := templateData{
 		LoggedIn:      h.service.IsUserLoggedIn(r),
 		AllPosts:      posts,
 		AllCategories: []string{"Movie", "Game", "Book", "Others"}, // Initialize AllCategories with values
-		// Role:          user.Role,
+		User:          user,
 	}
+
 	helpers.RenderTemplate(w, indexPath, data)
 }

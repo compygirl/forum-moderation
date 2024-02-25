@@ -55,7 +55,7 @@ func (userObj *UserServiceImpl) CreateUser(user *models.User) (int, int, error) 
 	return http.StatusOK, int(id), nil
 }
 
-func (userObj *UserServiceImpl) Login(email, password string) (*models.Session, error) {
+func (userObj *UserServiceImpl) Login(email, password string, admin bool) (*models.Session, error) {
 	user := &models.User{}
 	var err error
 
@@ -65,6 +65,22 @@ func (userObj *UserServiceImpl) Login(email, password string) (*models.Session, 
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, errors.New("Provided Password is Incorrect")
+	}
+
+	role, err := userObj.repo.GetUserRole(user.UserID)
+	// fmt.Println("USER ID: ", user.UserID, "  role:  ", role)
+	if err != nil {
+		return nil, errors.New("Some error with query to get user role")
+	}
+
+	if admin {
+		if role != "admin" {
+			return nil, errors.New("You do not have Admin access!")
+		}
+	} else {
+		if role == "admin" {
+			return nil, errors.New("You should select the admin role when logining")
+		}
 	}
 
 	session := &models.Session{
@@ -244,4 +260,12 @@ func (userObj *UserServiceImpl) ChangeUserRole(newRole string, userID int) error
 		return err
 	}
 	return nil
+}
+
+func (userObj *UserServiceImpl) GetUsersByRole(role string) ([]*models.User, error) {
+	users, err := userObj.repo.GetUserByRole(role)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }

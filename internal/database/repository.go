@@ -17,6 +17,8 @@ type UserRepoInterface interface {
 	DeleteSessionByToken(string) error
 	DeleteSessionByUserID(int) error
 	ChangeUserRole(string, int) error
+	GetUserRole(int) (string, error)
+	GetUserByRole(string) ([]*models.User, error)
 }
 
 type PostRepoInterface interface {

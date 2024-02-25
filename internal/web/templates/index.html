@@ -108,11 +108,12 @@
         <button onclick="location.href='/logout'">Logout</button><br>
         <br>
 
-
-        <form action="/moderator" method="post">
-            <!-- Include a hidden input field to submit user_id -->
-            <button class="moderator_btn" type="submit">Apply to be a Moderator</button>
-        </form>
+            {{if eq .User.Role "user"}}
+            <form action="/moderator" method="post">
+                <!-- Include a hidden input field to submit user_id -->
+                <button class="moderator_btn" type="submit">Apply to be a Moderator</button>
+            </form>
+            {{end}}
 
 
         <form action="/submit-post" enctype="multipart/form-data" method="post">

@@ -36,5 +36,9 @@ func (handler *Handler) InitRouter() *http.ServeMux {
 	mux.HandleFunc("/auth/github/callback", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.OnlyUnauthMiddleware(handler.GithubCallback))))
 	// mux.HandleFunc("/moderator", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.ModeratorRequestHandler))))
 	mux.HandleFunc("/moderator", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.ModeratorRequestHandler))))
+	// mux.HandleFunc("/moderator", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.AdminLoginHandler))))
+
+	mux.HandleFunc("/admin_page", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.AdminMainPageHandler))))
+	mux.HandleFunc("/approve", NewRateLimiter(10, time.Minute).LimitMiddleware(handler.CheckCookieMiddleware(handler.NeedAuthMiddleware(handler.ApproveModeratorHandler))))
 	return mux
 }

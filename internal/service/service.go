@@ -10,7 +10,7 @@ import (
 
 type UserServiceInterface interface {
 	CreateUser(*models.User) (int, int, error)
-	Login(string, string) (*models.Session, error)
+	Login(string, string, bool) (*models.Session, error)
 	IsUserLoggedIn(*http.Request) bool
 	Logout(string) error
 	IsTokenExist(string) bool
@@ -20,6 +20,7 @@ type UserServiceInterface interface {
 	GoogleAuthorization(*models.GoogleLoginUserData) (*models.Session, error)
 	GitHubAuthorization(*models.GitHubLoginUserData) (*models.Session, error)
 	ChangeUserRole(string, int) error
+	GetUsersByRole(string) ([]*models.User, error)
 }
 
 type PostServiceInterface interface {

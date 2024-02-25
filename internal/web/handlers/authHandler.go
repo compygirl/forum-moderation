@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"forum/internal/models"
 	helpers "forum/internal/web/handlers/helpers"
 	"net/http"
@@ -18,12 +19,22 @@ func (h *Handler) RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	case "POST":
 		psw, _ := bcrypt.GenerateFromPassword([]byte(r.FormValue("password")), bcrypt.DefaultCost)
+		var userRole string
+		admin := r.FormValue("admin") == "on"
+		if admin {
+			fmt.Println("Registration of ADMIN")
+			userRole = "admin"
+		} else {
+			userRole = "user"
+		}
+
 		user := &models.User{
 			FirstName:  r.FormValue("firstName"),
 			SecondName: r.FormValue("secondName"),
 			Username:   r.FormValue("username"),
 			Email:      r.FormValue("email"),
 			Password:   string(psw),
+			Role:       userRole,
 		}
 
 		statusCode, id, err := h.service.UserServiceInterface.CreateUser(user)
@@ -51,16 +62,31 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		email := r.FormValue("email")
 		password := r.FormValue("password")
-
-		session, err := h.service.UserServiceInterface.Login(email, password)
+		admin := r.FormValue("admin") == "on"
+		// check users credentials and handle the admin level
+		// if admin {
+		// } else {
+		// fmt.Println("ADMING BEFORE: ", admin)
+		session, err := h.service.UserServiceInterface.Login(email, password, admin)
 		if err != nil {
-			helpers.ErrorHandler(w, http.StatusBadRequest, err)
+			helpers.ErrorHandler(w, http.StatusForbidden, err)
+			return
+		} // else {
+
+		helpers.SessionCookieSet(w, session.Token, session.ExpTime)
+		// fmt.Println("ADMING AFTER: ", admin)
+		if admin {
+			// fmt.Println("ADMIN LOGINNING")
+			http.Redirect(w, r, "/admin_page", http.StatusSeeOther)
 			return
 		} else {
-			helpers.SessionCookieSet(w, session.Token, session.ExpTime)
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
+
+		//}
+		// }
+
 	default:
 		helpers.ErrorHandler(w, http.StatusUnauthorized, errors.New("Error in Login Handler"))
 		return
