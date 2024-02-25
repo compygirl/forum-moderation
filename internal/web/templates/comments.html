@@ -106,6 +106,12 @@
                                 <input type="hidden" name="postId" value="{{$postID}}">
                                 <input type="submit" value="👎 {{.DislikeCounter}}" class="hover" style="width: 100px; float: right; cursor: pointer;background-color: #fff;color: black;">
                             </form>
+
+                            {{if eq .UserRole "admin"}}
+                            <button onclick="location.href='/delete_post'">Delete Comment</button>
+                            <br>
+                            <br>
+                            {{end}}
                         </div>
                         {{end}}
 

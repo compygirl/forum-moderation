@@ -36,6 +36,7 @@ type PostRepoInterface interface {
 	DeleteFromPostVotes(int, int) error
 	UpdateReactionInPostVotes(int, int, int) error
 	GetPostsByCategory(string) ([]*models.Post, error)
+	DeletePostByID(int) error
 }
 
 type CommentRepoInterface interface {
@@ -47,6 +48,7 @@ type CommentRepoInterface interface {
 	AddReactionToCommentVotes(int, int, int) error
 	DeleteReactionFromCommentVotes(int, int) error
 	UpdateReactionInCommentVotes(int, int, int) error
+	DeleteAllCommentsByPostID(int) error
 }
 
 type Repository struct {

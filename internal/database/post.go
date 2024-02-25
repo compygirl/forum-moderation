@@ -211,3 +211,11 @@ func (postObj *PostRepoImpl) GetPostsByLikes(userID int) ([]*models.Post, error)
 	}
 	return posts, nil
 }
+
+func (postObj *PostRepoImpl) DeletePostByID(postID int) error {
+	_, err := postObj.db.Exec("DELETE FROM posts WHERE id = ? ", postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

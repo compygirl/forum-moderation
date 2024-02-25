@@ -11,7 +11,9 @@ import (
 )
 
 func (h *Handler) DisplayCommentsHandler(w http.ResponseWriter, r *http.Request) {
+
 	commentsPath := "internal/web/templates/comments.html"
+	var userGlob *models.User
 	type templateData struct {
 		LoggedIn    bool
 		ThePost     *models.Post
@@ -21,6 +23,51 @@ func (h *Handler) DisplayCommentsHandler(w http.ResponseWriter, r *http.Request)
 	switch r.Method {
 	case "GET":
 		postId := getPostIDFromURL(r.URL.Path)
+		// fmt.Println("POSTID: ", postId)
+		post, err := h.service.PostServiceInterface.GetPostByID(postId)
+		if err != nil {
+			// fmt.Println("failed in getting the post")
+			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		// get username
+		user, err := h.service.UserServiceInterface.GetUserByUserID(post.UserID)
+		// fmt.Println("USERNAME LOGGED IN: ", user.Username)
+		if err != nil {
+			// fmt.Println("failed in getting User")
+			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			return
+		}
+		post.Username = user.Username
+
+		// change the time format
+		post.CreatedTimeString = post.CreatedTime.Format("Jan 2, 2006 at 15:04")
+		// fmt.Println("REACHING HERE")
+		cookie := helpers.SessionCookieGet(r)
+		if cookie != nil {
+			expTime, err := h.service.UserServiceInterface.ExtendSessionTimeout(cookie.Value)
+			if err != nil {
+				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("The Time cannot be extended"))
+				return
+			}
+			if err := helpers.SessionCookieExtend(r, w, expTime); err != nil {
+				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Cookie cannot be extended"))
+				return
+			}
+			//getting info about the looged user
+			session, err := h.service.UserServiceInterface.GetSession(cookie.Value)
+			if err != nil {
+				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Session cannot be returned"))
+
+			}
+			userGlob, err = h.service.UserServiceInterface.GetUserByUserID(session.UserID)
+
+			if err != nil {
+				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("User cannot be get because no session"))
+
+			}
+		}
 		comments, err := h.service.CommentServiceInterface.GetAlCommentsForPost(postId)
 		if err != nil {
 			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
@@ -35,35 +82,9 @@ func (h *Handler) DisplayCommentsHandler(w http.ResponseWriter, r *http.Request)
 			}
 			comment.Username = user.Username
 			comment.CreatedTimeString = comment.CreatedTime.Format("Jan 2, 2006 at 15:04")
-		}
+			if userGlob != nil {
+				comment.UserRole = userGlob.Role
 
-		post, err := h.service.PostServiceInterface.GetPostByID(postId)
-		if err != nil {
-			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
-			return
-		}
-
-		// get username
-		user, err := h.service.UserServiceInterface.GetUserByUserID(post.UserID)
-		if err != nil {
-			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
-			return
-		}
-		post.Username = user.Username
-
-		// change the time format
-		post.CreatedTimeString = post.CreatedTime.Format("Jan 2, 2006 at 15:04")
-
-		cookie := helpers.SessionCookieGet(r)
-		if cookie != nil {
-			expTime, err := h.service.UserServiceInterface.ExtendSessionTimeout(cookie.Value)
-			if err != nil {
-				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("The Time cannot be extended"))
-				return
-			}
-			if err := helpers.SessionCookieExtend(r, w, expTime); err != nil {
-				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Cookie cannot be extended"))
-				return
 			}
 		}
 

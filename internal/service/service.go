@@ -31,12 +31,14 @@ type PostServiceInterface interface {
 	UpdateReaction(int, int, int) error
 	Filter(string, int) ([]*models.Post, error)
 	AddImagesToPost(*multipart.FileHeader) (string, error)
+	DeletePost(int) error
 }
 
 type CommentServiceInterface interface {
 	CreateComment(*models.Comment) (int, int, error)
 	GetAlCommentsForPost(int) ([]*models.Comment, error)
 	UpdateReaction(int, int, int) error
+	DeleteAllCommentsByPostID(int) error
 }
 
 type Service struct {

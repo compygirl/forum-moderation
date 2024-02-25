@@ -104,6 +104,7 @@ type Post struct {
 	Categories        []string
 	Comments          []*Comment
 	ImagePath         string
+	UserRole          string
 }
 
 type Comment struct {
@@ -116,6 +117,7 @@ type Comment struct {
 	CreatedTimeString string
 	LikesCounter      int
 	DislikeCounter    int
+	UserRole          string
 }
 
 type Database struct {

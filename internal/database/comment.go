@@ -101,3 +101,11 @@ func (cmnt *CommentRepoImpl) UpdateReactionInCommentVotes(commentID, userID, new
 	}
 	return nil
 }
+
+func (cmnt *CommentRepoImpl) DeleteAllCommentsByPostID(postID int) error {
+	_, err := cmnt.db.Exec("DELETE FROM comments WHERE post_id = ?", postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

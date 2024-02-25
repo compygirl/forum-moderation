@@ -8,7 +8,7 @@ import (
 )
 
 func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
-	var user *models.User
+	var userGlob *models.User
 	if r.URL.Path != "/" {
 		helpers.ErrorHandler(w, http.StatusNotFound, errors.New(" "))
 		return
@@ -17,8 +17,9 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 	type templateData struct {
 		LoggedIn      bool
 		AllPosts      []*models.Post
-		AllCategories []string
 		User          *models.User
+		AllCategories []string
+		// Role          string
 	}
 
 	posts, err := h.service.PostServiceInterface.GetAllPosts()
@@ -36,7 +37,7 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		user, err = h.service.UserServiceInterface.GetUserByUserID(session.UserID)
+		userGlob, err = h.service.UserServiceInterface.GetUserByUserID(session.UserID)
 		if err != nil {
 			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
 			return
@@ -66,6 +67,9 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 		// changing the format of the time
 		post.CreatedTimeString = post.CreatedTime.Format("Jan 2, 2006 at 15:04")
 
+		if userGlob != nil {
+			post.UserRole = userGlob.Role
+		}
 	}
 
 	// fmt.Println("ROLE inside : ", user)
@@ -73,8 +77,9 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 	data := templateData{
 		LoggedIn:      h.service.IsUserLoggedIn(r),
 		AllPosts:      posts,
+		User:          userGlob,
 		AllCategories: []string{"Movie", "Game", "Book", "Others"}, // Initialize AllCategories with values
-		User:          user,
+		// Role:          user.Role,
 	}
 
 	helpers.RenderTemplate(w, indexPath, data)

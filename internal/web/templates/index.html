@@ -171,6 +171,14 @@
                     <button onclick="location.href='/comments/{{.PostID}}'">Comments</button>
                     <br>
                     <br>
+                    {{if or (eq .UserRole "moderator") (eq .UserRole "admin")}}
+                    <form method="post" action="/delete_post">
+                        <input type="hidden" name="postId" value="{{.PostID}}">
+                        <button  type="submit">Delete Post</button>
+                    </form>
+                    <br>
+                    <br>
+                    {{end}}
                 </div>
                 {{end}}
             </div>

@@ -79,3 +79,11 @@ func (cmtObj *CommentServiceImpl) UpdateReaction(currReaction, commentID, userID
 	}
 	return err
 }
+
+func (cmtObj *CommentServiceImpl) DeleteAllCommentsByPostID(postID int) error {
+	err := cmtObj.repo.DeleteAllCommentsByPostID(postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

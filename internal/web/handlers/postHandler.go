@@ -80,7 +80,6 @@ func (h *Handler) CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		helpers.ErrorHandler(w, http.StatusMethodNotAllowed, errors.New("Error in Post Handler"))
 		return
-
 	}
 }
 
@@ -210,4 +209,48 @@ func (h *Handler) FilterHandler(w http.ResponseWriter, r *http.Request) {
 
 func getFiltersFieldFromURL(url string) string {
 	return strings.Title(strings.TrimPrefix(url, "/filter/"))
+}
+
+func (h *Handler) DeletePostHandler(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println("DELETETETETEE")
+
+	switch r.Method {
+	case "POST":
+		// fmt.Println("INSIDE DELETE HANDLER OF POST")
+		cookie := helpers.SessionCookieGet(r)
+		if cookie == nil {
+			helpers.ErrorHandler(w, http.StatusUnauthorized, errors.New("couldn't get the cookie in the Post Creation Handler"))
+			return
+		}
+		expTime, err := h.service.UserServiceInterface.ExtendSessionTimeout(cookie.Value)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("The Time cannot be extended"))
+			return
+		}
+		err = helpers.SessionCookieExtend(r, w, expTime)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("The Time cannot be extended"))
+			return
+		}
+		postID := r.FormValue("postId")
+		intPostID, err := strconv.Atoi(postID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			return
+		}
+		// fmt.Println("POST ID: ", postID)
+		err = h.service.PostServiceInterface.DeletePost(intPostID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		err = h.service.CommentServiceInterface.DeleteAllCommentsByPostID(intPostID)
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	default:
+		helpers.ErrorHandler(w, http.StatusMethodNotAllowed, errors.New("Error in Post Handler"))
+		return
+	}
 }
