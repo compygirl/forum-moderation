@@ -210,3 +210,57 @@ func (h *Handler) ReactOnCommentHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 }
+
+func (h *Handler) DeleteCommentHandler(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println("DELETETETETEE")
+
+	switch r.Method {
+	case "POST":
+		// fmt.Println("INSIDE DELETE HANDLER OF POST")
+		cookie := helpers.SessionCookieGet(r)
+		if cookie == nil {
+			helpers.ErrorHandler(w, http.StatusUnauthorized, errors.New("couldn't get the cookie in the Post Creation Handler"))
+			return
+		}
+		expTime, err := h.service.UserServiceInterface.ExtendSessionTimeout(cookie.Value)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("The Time cannot be extended"))
+			return
+		}
+		err = helpers.SessionCookieExtend(r, w, expTime)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("The Time cannot be extended"))
+			return
+		}
+		commentID := r.FormValue("commentId")
+		intCommentID, err := strconv.Atoi(commentID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			return
+		}
+		fmt.Println("COmment ID: ", intCommentID)
+
+		err = h.service.CommentServiceInterface.DeleteAllCommentVotesByCommentID(intCommentID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the votes for posts"))
+			return
+		}
+
+		err = h.service.CommentServiceInterface.DeleteAllCommentsByCommentID(intCommentID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the post"))
+			return
+		}
+
+		postId, err := strconv.Atoi(r.FormValue("postId"))
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusBadRequest, errors.New("Converstion of PostID is not allowed"))
+			return
+		}
+		http.Redirect(w, r, "/comments/"+fmt.Sprint(postId), http.StatusSeeOther)
+		return
+	default:
+		helpers.ErrorHandler(w, http.StatusMethodNotAllowed, errors.New("Error in Post Handler"))
+		return
+	}
+}

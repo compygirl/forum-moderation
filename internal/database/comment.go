@@ -109,3 +109,19 @@ func (cmnt *CommentRepoImpl) DeleteAllCommentsByPostID(postID int) error {
 	}
 	return nil
 }
+
+func (cmnt *CommentRepoImpl) DeleteAllCommentVotesByPostID(postID int) error {
+	_, err := cmnt.db.Exec("DELETE FROM comment_votes WHERE comment_id IN (SELECT id FROM comments WHERE post_id = ?)", postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (cmnt *CommentRepoImpl) DeleteAllCommentVotesByCommentID(commentID int) error {
+	_, err := cmnt.db.Exec("DELETE FROM comment_votes WHERE comment_id = ?", commentID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

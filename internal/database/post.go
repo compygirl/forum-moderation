@@ -219,3 +219,19 @@ func (postObj *PostRepoImpl) DeletePostByID(postID int) error {
 	}
 	return nil
 }
+
+func (postObj *PostRepoImpl) DeletePostCategoryByPostID(postID int) error {
+	_, err := postObj.db.Exec("DELETE FROM post_category WHERE post_id = ? ", postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (postObj *PostRepoImpl) DeleteAllPostVotesByPostID(postID int) error {
+	_, err := postObj.db.Exec("DELETE FROM post_votes WHERE post_id = ? ", postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

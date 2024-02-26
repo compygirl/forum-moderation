@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"forum/internal/models"
 	"forum/internal/web/handlers/helpers"
 	"net/http"
@@ -135,7 +134,7 @@ func (h *Handler) DeleteModeratorHandler(w http.ResponseWriter, r *http.Request)
 			return
 		}
 		userID := r.FormValue("userId")
-		fmt.Println("1 USER ID: ", userID)
+		// fmt.Println("1 USER ID: ", userID)
 		intUserID, err := strconv.Atoi(userID)
 		if err != nil {
 			helpers.ErrorHandler(w, http.StatusInternalServerError, err)

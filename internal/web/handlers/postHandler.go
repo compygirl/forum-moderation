@@ -241,12 +241,32 @@ func (h *Handler) DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 		// fmt.Println("POST ID: ", postID)
 		err = h.service.PostServiceInterface.DeletePost(intPostID)
 		if err != nil {
-			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the post"))
+			return
+		}
+
+		err = h.service.PostServiceInterface.DeletePostCategoryByPostID(intPostID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the post category"))
+			return
+		}
+
+		err = h.service.PostServiceInterface.DeleteAllPostVotesByPostID(intPostID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the votes for posts"))
+			return
+		}
+		err = h.service.CommentServiceInterface.DeleteAllCommentVotesByPostID(intPostID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the votes for posts"))
 			return
 		}
 
 		err = h.service.CommentServiceInterface.DeleteAllCommentsByPostID(intPostID)
-
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the post"))
+			return
+		}
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	default:

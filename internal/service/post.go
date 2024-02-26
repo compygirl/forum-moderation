@@ -211,3 +211,19 @@ func (postObj *PostServiceImpl) DeletePost(postID int) error {
 	}
 	return nil
 }
+
+func (postObj *PostServiceImpl) DeletePostCategoryByPostID(postID int) error {
+	err := postObj.repo.DeletePostCategoryByPostID(postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (postObj *PostServiceImpl) DeleteAllPostVotesByPostID(postID int) error {
+	err := postObj.repo.DeleteAllPostVotesByPostID(postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

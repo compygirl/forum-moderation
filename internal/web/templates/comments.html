@@ -108,7 +108,10 @@
                             </form>
 
                             {{if eq .UserRole "admin"}}
-                            <button onclick="location.href='/delete_post'">Delete Comment</button>
+                            <form method="post" action="/delete_comment">
+                                <input type="hidden" name="commentId" value="{{.CommentID}}">
+                                <button  type="submit">Delete Post</button>
+                            </form>
                             <br>
                             <br>
                             {{end}}

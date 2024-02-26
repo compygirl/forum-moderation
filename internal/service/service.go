@@ -32,6 +32,8 @@ type PostServiceInterface interface {
 	Filter(string, int) ([]*models.Post, error)
 	AddImagesToPost(*multipart.FileHeader) (string, error)
 	DeletePost(int) error
+	DeletePostCategoryByPostID(int) error
+	DeleteAllPostVotesByPostID(int) error
 }
 
 type CommentServiceInterface interface {
@@ -39,6 +41,8 @@ type CommentServiceInterface interface {
 	GetAlCommentsForPost(int) ([]*models.Comment, error)
 	UpdateReaction(int, int, int) error
 	DeleteAllCommentsByPostID(int) error
+	DeleteAllCommentVotesByPostID(int) error
+	DeleteAllCommentVotesByCommentID(int) error
 }
 
 type Service struct {

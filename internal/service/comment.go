@@ -87,3 +87,19 @@ func (cmtObj *CommentServiceImpl) DeleteAllCommentsByPostID(postID int) error {
 	}
 	return nil
 }
+
+func (cmtObj *CommentServiceImpl) DeleteAllCommentVotesByPostID(postID int) error {
+	err := cmtObj.repo.DeleteAllCommentVotesByPostID(postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (cmtObj *CommentServiceImpl) DeleteAllCommentVotesByCommentID(commentID int) error {
+	err := cmtObj.repo.DeleteAllCommentVotesByCommentID(commentID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
