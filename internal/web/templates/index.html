@@ -14,8 +14,8 @@
         .dropdown {
           position: relative;
           display: inline-block;
+          
         }
-        
         .dropdown-content {
           display: none;
           position: absolute;
@@ -103,7 +103,7 @@
         </div> 
         <br>
         <br>
-        {{$userID:=.User.UserUserID}}
+       
         {{ if  .LoggedIn}}
         <h2>Welcome </h2>
         <button onclick="location.href='/logout'">Logout</button><br>
@@ -135,7 +135,7 @@
         <br>
         <div class="frame">
             <div class="content">
-                <!-- {{$userID:=.User.UserUserID}} -->
+                {{$userID:=.User.UserUserID}}
                 {{range .AllPosts}}
                     {{if or (.IsApproved) (eq .UserRole "moderator") (eq .UserRole "admin") (eq .UserID $userID)}}
                         <div class="post">
@@ -197,10 +197,8 @@
             <br>
             <br>
             <div class = "content">
-                <!-- {{$userID:=.User.UserUserID}} -->
                 {{range .AllPosts}}
-                {{if or (.IsApproved) (eq .UserRole "moderator") (eq .UserRole "admin") (eq .UserID $userID)}}
-
+                {{if .IsApproved }}
                 <div class = "post">
                     <h1 class = "title">{{.Title}}</h1>
                     <p class="meta"><span class="date">Posted at: {{.CreatedTimeString}}</span><span class="postedby">Posted by: {{.Username}}</span></p>
