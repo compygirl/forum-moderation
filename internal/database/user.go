@@ -28,7 +28,7 @@ func (userObj *UserRepoImpl) GetUserByEmail(email string) (*models.User, error) 
 	user := &models.User{}
 	err := userObj.db.QueryRow(
 		`SELECT id, firstName, secondName, usernames, email, password FROM users WHERE email = ?`,
-		email).Scan(&user.UserID, &user.FirstName, &user.SecondName, &user.Username, &user.Email, &user.Password)
+		email).Scan(&user.UserUserID, &user.FirstName, &user.SecondName, &user.Username, &user.Email, &user.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("element with EMAIL not found")
@@ -43,7 +43,7 @@ func (userObj *UserRepoImpl) GetUserByUsername(username string) (*models.User, e
 	user := &models.User{}
 	err := userObj.db.QueryRow(
 		`SELECT id, firstName, secondName, usernames, email, password FROM users WHERE usernames = ?`,
-		username).Scan(&user.UserID, &user.FirstName, &user.SecondName, &user.Username, &user.Email, &user.Password)
+		username).Scan(&user.UserUserID, &user.FirstName, &user.SecondName, &user.Username, &user.Email, &user.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("element with USERNAME not found")
@@ -57,7 +57,7 @@ func (userObj *UserRepoImpl) GetUserByUserID(userID int) (*models.User, error) {
 	user := &models.User{}
 	err := userObj.db.QueryRow(
 		`SELECT id, firstName, secondName, usernames, email, password, role FROM users WHERE id = ?`,
-		userID).Scan(&user.UserID, &user.FirstName, &user.SecondName, &user.Username, &user.Email, &user.Password, &user.Role)
+		userID).Scan(&user.UserUserID, &user.FirstName, &user.SecondName, &user.Username, &user.Email, &user.Password, &user.Role)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,7 @@ func (userObj *UserRepoImpl) GetUserByRole(role string) ([]*models.User, error) 
 
 	for rows.Next() {
 		var user models.User
-		err = rows.Scan(&user.UserID, &user.Username, &user.Email)
+		err = rows.Scan(&user.UserUserID, &user.Username, &user.Email)
 		if err != nil {
 			return nil, err
 		}

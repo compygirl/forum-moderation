@@ -125,3 +125,11 @@ func (cmnt *CommentRepoImpl) DeleteAllCommentVotesByCommentID(commentID int) err
 	}
 	return nil
 }
+
+func (cmnt *CommentRepoImpl) DeleteCommentByCommentID(commentID int) error {
+	_, err := cmnt.db.Exec("DELETE FROM comments WHERE id = ?;", commentID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

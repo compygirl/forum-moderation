@@ -22,11 +22,13 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 		// Role          string
 	}
 
+	// fmt.Printf("BEfore getting all posts")
 	posts, err := h.service.PostServiceInterface.GetAllPosts()
 	if err != nil {
 		helpers.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
+	// fmt.Printf("After getting all posts")
 
 	// getting session for getting the user details:
 	cookie := helpers.SessionCookieGet(r)
@@ -81,6 +83,7 @@ func (h *Handler) GetMainPage(w http.ResponseWriter, r *http.Request) {
 		AllCategories: []string{"Movie", "Game", "Book", "Others"}, // Initialize AllCategories with values
 		// Role:          user.Role,
 	}
+	// fmt.Println(data.User.UserUserID, "    ", data.AllPosts[0].UserID)
 
 	helpers.RenderTemplate(w, indexPath, data)
 }

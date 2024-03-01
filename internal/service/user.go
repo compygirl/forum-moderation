@@ -6,6 +6,7 @@ import (
 	"forum/internal/database"
 	"forum/internal/models"
 	"forum/internal/web/handlers/helpers"
+	"log"
 	"net/http"
 	"regexp"
 	"time"
@@ -56,18 +57,21 @@ func (userObj *UserServiceImpl) CreateUser(user *models.User) (int, int, error) 
 }
 
 func (userObj *UserServiceImpl) Login(email, password string, admin bool) (*models.Session, error) {
+	// fmt.Println("Logining...: ", admin)
 	user := &models.User{}
 	var err error
 
 	if user, err = userObj.repo.GetUserByEmail(email); err != nil {
+		log.Printf("Login: GetUserByEmail: %v", err)
 		return nil, errors.New("Provided Email is Incorrect or doesn't exist")
 	}
+	// fmt.Println("USERNAME: ", user.Username)
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, errors.New("Provided Password is Incorrect")
 	}
 
-	role, err := userObj.repo.GetUserRole(user.UserID)
+	role, err := userObj.repo.GetUserRole(user.UserUserID)
 	// fmt.Println("USER ID: ", user.UserID, "  role:  ", role)
 	if err != nil {
 		return nil, errors.New("Some error with query to get user role")
@@ -84,12 +88,12 @@ func (userObj *UserServiceImpl) Login(email, password string, admin bool) (*mode
 	}
 
 	session := &models.Session{
-		UserID:  user.UserID,
+		UserID:  user.UserUserID,
 		Token:   uuid.New().String(),
 		ExpTime: time.Now().Add(10 * time.Minute),
 	}
 
-	if err := userObj.repo.DeleteSessionByUserID(user.UserID); err != nil {
+	if err := userObj.repo.DeleteSessionByUserID(user.UserUserID); err != nil {
 		return nil, errors.New("Error deleting the Session by USER ID")
 	}
 
@@ -97,7 +101,7 @@ func (userObj *UserServiceImpl) Login(email, password string, admin bool) (*mode
 	if err != nil {
 		return nil, err
 	}
-
+	// fmt.Println("Reaching the end of the Login")
 	return session, nil
 }
 
@@ -195,7 +199,7 @@ func (userObj *UserServiceImpl) GoogleAuthorization(googleUser *models.GoogleLog
 			Email:    googleUser.Email,
 			Password: "dummypassword",
 		}
-		_, user.UserID, err = userObj.CreateUser(user)
+		_, user.UserUserID, err = userObj.CreateUser(user)
 
 		if err != nil && err.Error() != errors.New("element with EMAIL not found").Error() {
 			return nil, err
@@ -203,11 +207,11 @@ func (userObj *UserServiceImpl) GoogleAuthorization(googleUser *models.GoogleLog
 	}
 
 	session := &models.Session{
-		UserID:  user.UserID,
+		UserID:  user.UserUserID,
 		Token:   uuid.New().String(),
 		ExpTime: time.Now().Add(10 * time.Minute),
 	}
-	if err := userObj.repo.DeleteSessionByUserID(user.UserID); err != nil {
+	if err := userObj.repo.DeleteSessionByUserID(user.UserUserID); err != nil {
 		return nil, errors.New("Error deleting the Session by USER ID")
 	}
 
@@ -234,17 +238,17 @@ func (userObj *UserServiceImpl) GitHubAuthorization(githubUser *models.GitHubLog
 			Email:    githubUser.Email,
 			Password: "dummypassword",
 		}
-		_, user.UserID, err = userObj.CreateUser(user)
+		_, user.UserUserID, err = userObj.CreateUser(user)
 		if err != nil && err.Error() != errors.New("element with EMAIL not found").Error() {
 			return nil, err
 		}
 	}
 	session := &models.Session{
-		UserID:  user.UserID,
+		UserID:  user.UserUserID,
 		Token:   uuid.New().String(),
 		ExpTime: time.Now().Add(10 * time.Minute),
 	}
-	if err := userObj.repo.DeleteSessionByUserID(user.UserID); err != nil {
+	if err := userObj.repo.DeleteSessionByUserID(user.UserUserID); err != nil {
 		return nil, errors.New("Error deleting the Session by USER ID")
 	}
 	err = userObj.repo.CreateSession(session)

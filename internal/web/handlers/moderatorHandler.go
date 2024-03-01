@@ -26,7 +26,7 @@ func (h *Handler) ModeratorRequestHandler(w http.ResponseWriter, r *http.Request
 		}
 
 		// changing role to pending from user
-		err = h.service.UserServiceInterface.ChangeUserRole("pending", user.UserID)
+		err = h.service.UserServiceInterface.ChangeUserRole("pending", user.UserUserID)
 		if err != nil {
 			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
 			return

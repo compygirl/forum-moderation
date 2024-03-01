@@ -110,7 +110,8 @@
                             {{if eq .UserRole "admin"}}
                             <form method="post" action="/delete_comment">
                                 <input type="hidden" name="commentId" value="{{.CommentID}}">
-                                <button  type="submit">Delete Post</button>
+                                <input type="hidden" name="postId" value="{{$postID}}">
+                                <button  type="submit">Delete Comment</button>
                             </form>
                             <br>
                             <br>

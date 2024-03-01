@@ -76,7 +76,7 @@ type GitHubLoginUserData struct {
 }
 
 type User struct {
-	UserID     int
+	UserUserID int
 	FirstName  string
 	SecondName string
 	Username   string
@@ -105,6 +105,7 @@ type Post struct {
 	Comments          []*Comment
 	ImagePath         string
 	UserRole          string
+	IsApproved        int
 }
 
 type Comment struct {
@@ -118,6 +119,7 @@ type Comment struct {
 	LikesCounter      int
 	DislikeCounter    int
 	UserRole          string
+	// IsApproved        int
 }
 
 type Database struct {

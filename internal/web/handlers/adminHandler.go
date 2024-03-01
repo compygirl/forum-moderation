@@ -99,7 +99,6 @@ func (h *Handler) ManageModeratorsHandler(w http.ResponseWriter, r *http.Request
 	case "GET":
 		moderatorUsers, err := h.service.UserServiceInterface.GetUsersByRole("moderator")
 		if err != nil {
-
 			helpers.ErrorHandler(w, http.StatusBadRequest, errors.New("PEDNING USERS were not found"))
 		}
 		data := templateData{
@@ -111,7 +110,6 @@ func (h *Handler) ManageModeratorsHandler(w http.ResponseWriter, r *http.Request
 		helpers.ErrorHandler(w, http.StatusMethodNotAllowed, errors.New("in Admin Page Handler"))
 		return
 	}
-
 }
 
 func (h *Handler) DeleteModeratorHandler(w http.ResponseWriter, r *http.Request) {

@@ -109,10 +109,10 @@ th {
       <tr>
         <td>{{.Username}}</td>
         <td>{{.Email}}</td>
-        <td>{{.UserID}}</td>
+        <td>{{.UserUserID}}</td>
         <td>
           <form method="post" action="/delete_moderator">
-            <input type="hidden" name="userId" value="{{.UserID}}">
+            <input type="hidden" name="userId" value="{{.UserUserID}}">
             <button class="reject-btn" type="submit">Delete Moderator</button>
           </form>
         </td>

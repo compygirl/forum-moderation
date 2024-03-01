@@ -110,17 +110,17 @@ th {
       <tr>
         <td>{{.Username}}</td>
         <td>{{.Email}}</td>
-        <td>{{.UserID}}</td>
+        <td>{{.UserUserID}}</td>
         <td>
           <form method="post" action="/approve-reject">
-            <input type="hidden" name="userId" value="{{.UserID}}">
+            <input type="hidden" name="userId" value="{{.UserUserID}}">
             <input type="hidden" name="action" value="approve">
             <button class="approve-btn" type="submit">Approve</button>
           </form>
         </td>
         <td>
           <form method="post" action="/approve-reject">
-            <input type="hidden" name="userId" value="{{.UserID}}">
+            <input type="hidden" name="userId" value="{{.UserUserID}}">
             <input type="hidden" name="action" value="reject">
             <button class="reject-btn" type="submit">Reject</button>
           </form>

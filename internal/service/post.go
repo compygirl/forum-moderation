@@ -33,6 +33,7 @@ func (postObj *PostServiceImpl) CreatePost(post *models.Post) (int, int, error) 
 	post.CreatedTime = time.Now()
 	post.LikesCounter = 0
 	post.DislikeCounter = 0
+	post.IsApproved = 0
 	id, err := postObj.repo.CreatePostRepo(post)
 	if err != nil {
 		return http.StatusInternalServerError, -1, err
@@ -49,6 +50,7 @@ func (postObj *PostServiceImpl) CreatePost(post *models.Post) (int, int, error) 
 
 func (postObj *PostServiceImpl) GetAllPosts() ([]*models.Post, error) {
 	posts, err := postObj.repo.GetAllPosts()
+	// fmt.Println("fetched all postss")
 	if err != nil {
 		return nil, err
 	}

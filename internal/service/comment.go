@@ -103,3 +103,11 @@ func (cmtObj *CommentServiceImpl) DeleteAllCommentVotesByCommentID(commentID int
 	}
 	return nil
 }
+
+func (cmtObj *CommentServiceImpl) DeleteCommentByCommentID(commentID int) error {
+	err := cmtObj.repo.DeleteCommentByCommentID(commentID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

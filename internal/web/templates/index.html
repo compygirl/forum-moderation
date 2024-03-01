@@ -103,6 +103,7 @@
         </div> 
         <br>
         <br>
+        {{$userID:=.User.UserUserID}}
         {{ if  .LoggedIn}}
         <h2>Welcome </h2>
         <button onclick="location.href='/logout'">Logout</button><br>
@@ -134,52 +135,55 @@
         <br>
         <div class="frame">
             <div class="content">
+                <!-- {{$userID:=.User.UserUserID}} -->
                 {{range .AllPosts}}
-                <div class="post">
-                    <h1 class="title">{{.Title}}</h1>
-                    <p class="meta">
-                        <span class="date">Posted at: {{.CreatedTimeString}}</span>
-                        <span class="postedby">Posted by: {{.Username}}</span>
-                    </p>
-        
-                    {{if .ImagePath}}
-                        <img src="{{.ImagePath}}" alt="Image Description" width="300">
+                    {{if or (.IsApproved) (eq .UserRole "moderator") (eq .UserRole "admin") (eq .UserID $userID)}}
+                        <div class="post">
+                            <h1 class="title">{{.Title}}</h1>
+                            <p class="meta">
+                                <span class="date">Posted at: {{.CreatedTimeString}}</span>
+                                <span class="postedby">Posted by: {{.Username}}</span>
+                            </p>
+                
+                            {{if .ImagePath}}
+                                <img src="{{.ImagePath}}" alt="Image Description" width="300">
+                            {{end}}
+                            <div style="clear: both;">&nbsp;</div>
+                            <div class="entry">
+                                <h2>{{.Content}}</h2>
+                            </div>
+                
+                            <p>
+                                {{range .Categories}}
+                                <span>#{{.}}</span>
+                                {{end}}
+                            </p>
+                
+                            <form action="/post/react" method="POST" class="formsize">
+                                <input type="hidden" name="post_id" value="{{.PostID}}">
+                                <input type="hidden" name="type" value="1">
+                                <input type="submit" value="👍 {{.LikesCounter}}" class="hover" style="width: 100px;display:flex; float: center; cursor: pointer;background-color: #fff;color: black;">
+                            </form>
+                            
+                            <form action="/post/react" method="POST" class="formsize">
+                                <input type="hidden" name="post_id" value="{{.PostID}}">
+                                <input type="hidden" name="type" value="-1">
+                                <input type="submit" value="👎 {{.DislikeCounter}}" class="hover" style="width: 100px;display:flex; float: center; cursor: pointer;background-color: #fff;color: black;">
+                            </form>
+                
+                            <button onclick="location.href='/comments/{{.PostID}}'">Comments</button>
+                            <br>
+                            <br>
+                            {{if or (eq .UserRole "moderator") (eq .UserRole "admin")}}
+                            <form method="post" action="/delete_post">
+                                <input type="hidden" name="postId" value="{{.PostID}}">
+                                <button  type="submit">Delete Post</button>
+                            </form>
+                            <br>
+                            <br>
+                            {{end}}
+                        </div>
                     {{end}}
-                    <div style="clear: both;">&nbsp;</div>
-                    <div class="entry">
-                        <h2>{{.Content}}</h2>
-                    </div>
-        
-                    <p>
-                        {{range .Categories}}
-                        <span>#{{.}}</span>
-                        {{end}}
-                    </p>
-        
-                    <form action="/post/react" method="POST" class="formsize">
-                        <input type="hidden" name="post_id" value="{{.PostID}}">
-                        <input type="hidden" name="type" value="1">
-                        <input type="submit" value="👍 {{.LikesCounter}}" class="hover" style="width: 100px;display:flex; float: center; cursor: pointer;background-color: #fff;color: black;">
-                    </form>
-                    
-                    <form action="/post/react" method="POST" class="formsize">
-                        <input type="hidden" name="post_id" value="{{.PostID}}">
-                        <input type="hidden" name="type" value="-1">
-                        <input type="submit" value="👎 {{.DislikeCounter}}" class="hover" style="width: 100px;display:flex; float: center; cursor: pointer;background-color: #fff;color: black;">
-                    </form>
-        
-                    <button onclick="location.href='/comments/{{.PostID}}'">Comments</button>
-                    <br>
-                    <br>
-                    {{if or (eq .UserRole "moderator") (eq .UserRole "admin")}}
-                    <form method="post" action="/delete_post">
-                        <input type="hidden" name="postId" value="{{.PostID}}">
-                        <button  type="submit">Delete Post</button>
-                    </form>
-                    <br>
-                    <br>
-                    {{end}}
-                </div>
                 {{end}}
             </div>
         </div>
@@ -193,7 +197,10 @@
             <br>
             <br>
             <div class = "content">
+                <!-- {{$userID:=.User.UserUserID}} -->
                 {{range .AllPosts}}
+                {{if or (.IsApproved) (eq .UserRole "moderator") (eq .UserRole "admin") (eq .UserID $userID)}}
+
                 <div class = "post">
                     <h1 class = "title">{{.Title}}</h1>
                     <p class="meta"><span class="date">Posted at: {{.CreatedTimeString}}</span><span class="postedby">Posted by: {{.Username}}</span></p>
@@ -213,6 +220,7 @@
                     <p><span>👍 {{.LikesCounter}}</span> <span>👎 {{.DislikeCounter}}</span></p>
                     <button onclick="location.href='/comments/{{.PostID}}'">Comments</button>
                 </div>
+                {{end}}
                 {{end}}
             </div>
         {{end}}

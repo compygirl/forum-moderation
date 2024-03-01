@@ -11,7 +11,6 @@ import (
 	"strings"
 )
 
-
 func (h *Handler) GoogleAuthHandler(w http.ResponseWriter, r *http.Request) {
 	scope := url.QueryEscape("email profile https://www.googleapis.com/auth/drive.file")
 	url := fmt.Sprintf("%s?client_id=%s&redirect_uri=%s&response_type=code&scope=%s&prompt=select_account", models.GoogleAuthURL, models.GoogleClientID, models.GoogleRedirectURL, scope)

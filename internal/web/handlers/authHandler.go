@@ -42,7 +42,7 @@ func (h *Handler) RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 			helpers.ErrorHandler(w, statusCode, err)
 			return
 		}
-		user.UserID = id
+		user.UserUserID = id
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	default:

@@ -11,7 +11,6 @@ import (
 )
 
 func (h *Handler) DisplayCommentsHandler(w http.ResponseWriter, r *http.Request) {
-
 	commentsPath := "internal/web/templates/comments.html"
 	var userGlob *models.User
 	type templateData struct {
@@ -55,17 +54,15 @@ func (h *Handler) DisplayCommentsHandler(w http.ResponseWriter, r *http.Request)
 				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Cookie cannot be extended"))
 				return
 			}
-			//getting info about the looged user
+			// getting info about the looged user
 			session, err := h.service.UserServiceInterface.GetSession(cookie.Value)
 			if err != nil {
 				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Session cannot be returned"))
-
 			}
 			userGlob, err = h.service.UserServiceInterface.GetUserByUserID(session.UserID)
 
 			if err != nil {
 				helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("User cannot be get because no session"))
-
 			}
 		}
 		comments, err := h.service.CommentServiceInterface.GetAlCommentsForPost(postId)
@@ -84,7 +81,6 @@ func (h *Handler) DisplayCommentsHandler(w http.ResponseWriter, r *http.Request)
 			comment.CreatedTimeString = comment.CreatedTime.Format("Jan 2, 2006 at 15:04")
 			if userGlob != nil {
 				comment.UserRole = userGlob.Role
-
 			}
 		}
 
@@ -238,7 +234,7 @@ func (h *Handler) DeleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
 			return
 		}
-		fmt.Println("COmment ID: ", intCommentID)
+		// fmt.Println("COmment ID: ", intCommentID)
 
 		err = h.service.CommentServiceInterface.DeleteAllCommentVotesByCommentID(intCommentID)
 		if err != nil {
@@ -246,17 +242,18 @@ func (h *Handler) DeleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = h.service.CommentServiceInterface.DeleteAllCommentsByCommentID(intCommentID)
+		err = h.service.CommentServiceInterface.DeleteCommentByCommentID(intCommentID)
 		if err != nil {
 			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the post"))
 			return
 		}
 
 		postId, err := strconv.Atoi(r.FormValue("postId"))
-		if err != nil {
-			helpers.ErrorHandler(w, http.StatusBadRequest, errors.New("Converstion of PostID is not allowed"))
-			return
-		}
+		// fmt.Println("POST ID : ", postId)
+		// if err != nil {
+		// 	helpers.ErrorHandler(w, http.StatusBadRequest, errors.New("Converstion of PostID is not allowed"))
+		// 	return
+		// }
 		http.Redirect(w, r, "/comments/"+fmt.Sprint(postId), http.StatusSeeOther)
 		return
 	default:

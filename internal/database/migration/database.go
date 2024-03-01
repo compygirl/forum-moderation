@@ -65,6 +65,7 @@ func CreateAllTables(ctx context.Context, db *sql.DB) error {
 			likes_counter INTEGER, 
 			dislikes_counter INTEGER,
 			image_path TEXT,
+			is_approved INTEGER,
 			FOREIGN KEY (user_id) REFERENCES users (id)
 		)
 	`); err != nil {
@@ -111,6 +112,7 @@ func CreateAllTables(ctx context.Context, db *sql.DB) error {
 			created_time DATE,
 			likes_counter INTEGER, 
 			dislikes_counter INTEGER,
+			is_approved INTEGER,
 			FOREIGN KEY (post_id) REFERENCES posts (id)
 			FOREIGN KEY (user_id) REFERENCES users (id)
 		)

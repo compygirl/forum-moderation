@@ -43,6 +43,7 @@ type CommentServiceInterface interface {
 	DeleteAllCommentsByPostID(int) error
 	DeleteAllCommentVotesByPostID(int) error
 	DeleteAllCommentVotesByCommentID(int) error
+	DeleteCommentByCommentID(int) error
 }
 
 type Service struct {

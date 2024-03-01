@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/internal/models"
 )
 
@@ -15,8 +16,8 @@ func CreateNewPostDB(db *sql.DB) *PostRepoImpl {
 
 func (postObj *PostRepoImpl) CreatePostRepo(post *models.Post) (int64, error) {
 	result, err := postObj.db.Exec(`
-		INSERT INTO posts (user_id, title, content, created_time, likes_counter, dislikes_counter, image_path) VALUES (?, ?, ?, ?, ?, ?, ?);`,
-		post.UserID, post.Title, post.Content, post.CreatedTime, post.LikesCounter, post.DislikeCounter, post.ImagePath)
+		INSERT INTO posts (user_id, title, content, created_time, likes_counter, dislikes_counter, image_path, is_approved) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
+		post.UserID, post.Title, post.Content, post.CreatedTime, post.LikesCounter, post.DislikeCounter, post.ImagePath, post.IsApproved)
 	if err != nil {
 		return -1, err
 	}
@@ -32,8 +33,9 @@ func (postObj *PostRepoImpl) GetAllPosts() ([]*models.Post, error) {
 
 	for rows.Next() {
 		var post models.Post
-		err = rows.Scan(&post.PostID, &post.UserID, &post.Title, &post.Content, &post.CreatedTime, &post.LikesCounter, &post.DislikeCounter, &post.ImagePath)
+		err = rows.Scan(&post.PostID, &post.UserID, &post.Title, &post.Content, &post.CreatedTime, &post.LikesCounter, &post.DislikeCounter, &post.ImagePath, &post.IsApproved)
 		if err != nil {
+			fmt.Println("Scanning from DB")
 			return nil, err
 		}
 		posts = append(posts, &post)
