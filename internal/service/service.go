@@ -26,7 +26,7 @@ type UserServiceInterface interface {
 type PostServiceInterface interface {
 	GetAllPosts() ([]*models.Post, error)
 	GetPostByID(int) (*models.Post, error)
-	CreatePost(*models.Post) (int, int, error)
+	CreatePost(*models.Post, string) (int, int, error)
 	GetCategories(int) ([]string, error)
 	UpdateReaction(int, int, int) error
 	Filter(string, int) ([]*models.Post, error)
@@ -34,6 +34,7 @@ type PostServiceInterface interface {
 	DeletePost(int) error
 	DeletePostCategoryByPostID(int) error
 	DeleteAllPostVotesByPostID(int) error
+	ApprovePost(int) error
 }
 
 type CommentServiceInterface interface {
@@ -44,6 +45,7 @@ type CommentServiceInterface interface {
 	DeleteAllCommentVotesByPostID(int) error
 	DeleteAllCommentVotesByCommentID(int) error
 	DeleteCommentByCommentID(int) error
+	ApproveComment(int) error
 }
 
 type Service struct {

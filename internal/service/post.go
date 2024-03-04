@@ -25,7 +25,7 @@ func CreateNewPostService(repo database.PostRepoInterface) *PostServiceImpl {
 	return &postService
 }
 
-func (postObj *PostServiceImpl) CreatePost(post *models.Post) (int, int, error) {
+func (postObj *PostServiceImpl) CreatePost(post *models.Post, userRole string) (int, int, error) {
 	if err := postObj.isPostParamsValid(post); err != nil {
 		return http.StatusBadRequest, -1, err
 	}
@@ -33,7 +33,12 @@ func (postObj *PostServiceImpl) CreatePost(post *models.Post) (int, int, error) 
 	post.CreatedTime = time.Now()
 	post.LikesCounter = 0
 	post.DislikeCounter = 0
-	post.IsApproved = 0
+
+	if userRole == "admin" || userRole == "moderator" {
+		post.IsApproved = 1
+	} else {
+		post.IsApproved = 0
+	}
 	id, err := postObj.repo.CreatePostRepo(post)
 	if err != nil {
 		return http.StatusInternalServerError, -1, err
@@ -224,6 +229,14 @@ func (postObj *PostServiceImpl) DeletePostCategoryByPostID(postID int) error {
 
 func (postObj *PostServiceImpl) DeleteAllPostVotesByPostID(postID int) error {
 	err := postObj.repo.DeleteAllPostVotesByPostID(postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (postObj *PostServiceImpl) ApprovePost(postID int) error {
+	err := postObj.repo.UpdateIsApprovePostStatus(postID)
 	if err != nil {
 		return err
 	}

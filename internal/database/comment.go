@@ -15,8 +15,8 @@ func CreateNewCommentDB(db *sql.DB) *CommentRepoImpl {
 
 func (cmnt *CommentRepoImpl) CreateCommentRepo(comment *models.Comment) (int64, error) {
 	result, err := cmnt.db.Exec(`
-	INSERT INTO comments (user_id, post_id, content, created_time, likes_counter, dislikes_counter) VALUES (?, ?, ?, ?, ?, ?);`,
-		comment.UserID, comment.PostID, comment.Content, comment.CreatedTime, comment.LikesCounter, comment.DislikeCounter)
+	INSERT INTO comments (user_id, post_id, content, created_time, likes_counter, dislikes_counter, is_approved) VALUES (?, ?, ?, ?, ?, ?, ?);`,
+		comment.UserID, comment.PostID, comment.Content, comment.CreatedTime, comment.LikesCounter, comment.DislikeCounter, comment.IsApproved)
 	if err != nil {
 		return -1, err
 	}
@@ -33,7 +33,7 @@ func (cmnt *CommentRepoImpl) GetAlCommentsForPost(postID int) ([]*models.Comment
 
 	for rows.Next() {
 		var comment models.Comment
-		err = rows.Scan(&comment.CommentID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedTime, &comment.LikesCounter, &comment.DislikeCounter)
+		err = rows.Scan(&comment.CommentID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedTime, &comment.LikesCounter, &comment.DislikeCounter, &comment.IsApproved)
 		if err != nil {
 			return nil, err
 		}
@@ -128,6 +128,14 @@ func (cmnt *CommentRepoImpl) DeleteAllCommentVotesByCommentID(commentID int) err
 
 func (cmnt *CommentRepoImpl) DeleteCommentByCommentID(commentID int) error {
 	_, err := cmnt.db.Exec("DELETE FROM comments WHERE id = ?;", commentID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (cmnt *CommentRepoImpl) UpdateIsApproveCommentStatus(commentID int) error {
+	_, err := cmnt.db.Exec("UPDATE comments SET is_approved = 1 WHERE id = ?", commentID)
 	if err != nil {
 		return err
 	}

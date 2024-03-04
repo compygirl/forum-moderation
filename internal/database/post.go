@@ -237,3 +237,11 @@ func (postObj *PostRepoImpl) DeleteAllPostVotesByPostID(postID int) error {
 	}
 	return nil
 }
+
+func (postObj *PostRepoImpl) UpdateIsApprovePostStatus(postID int) error {
+	_, err := postObj.db.Exec("UPDATE posts SET is_approved = 1 WHERE id = ?", postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

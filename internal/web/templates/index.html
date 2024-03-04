@@ -14,8 +14,8 @@
         .dropdown {
           position: relative;
           display: inline-block;
-          
         }
+        
         .dropdown-content {
           display: none;
           position: absolute;
@@ -182,6 +182,29 @@
                             <br>
                             <br>
                             {{end}}
+
+                            {{if and ( or (eq .UserRole "moderator") (eq .UserRole "admin")) (not .IsApproved) }}
+                                <label><input type="checkbox" name="report" value="irrelevant"> irrelevant </label>
+                                <label><input type="checkbox" name="report" value="obscene"> obscene </label>
+                                <label><input type="checkbox" name="report" value="illegal"> illegal </label>
+                                <label><input type="checkbox" name="report" value="insulting"> insulting </label><br>
+                                <br>
+                                <form method="post" action="/report_post">
+                                    <input type="hidden" name="postId" value="{{.PostID}}">
+                                    <button  type="submit">Report Post</button>
+                                </form>
+                                <br>
+                                <br>
+
+                                <form method="post" action="/approve_post">
+                                    <input type="hidden" name="postId" value="{{.PostID}}">
+                                    <button  type="submit">Approve Post</button>
+                                </form>
+                                <br>
+                                <br>
+                            {{end}}
+
+
                         </div>
                     {{end}}
                 {{end}}
@@ -198,7 +221,7 @@
             <br>
             <div class = "content">
                 {{range .AllPosts}}
-                {{if .IsApproved }}
+                {{if .IsApproved}}
                 <div class = "post">
                     <h1 class = "title">{{.Title}}</h1>
                     <p class="meta"><span class="date">Posted at: {{.CreatedTimeString}}</span><span class="postedby">Posted by: {{.Username}}</span></p>

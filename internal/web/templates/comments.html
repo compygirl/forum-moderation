@@ -86,7 +86,9 @@
                         </div>
                     </div>    
                         {{$postID:=.ThePost.PostID}}
+                        {{$userID:=.User.UserUserID}}
                         {{range .AllComments}}
+                        {{if or (.IsApproved) (eq .UserRole "moderator") (eq .UserRole "admin") (eq .UserID $userID)}}
                         <div class = "comment">
                             <div class = "entry">
                                 <p class="meta"><span class="date">Posted at: {{.CreatedTimeString}}</span><span class="postedby">Commented by: {{.Username}}</span></p>
@@ -116,7 +118,18 @@
                             <br>
                             <br>
                             {{end}}
+
+
+                            {{if and ( or (eq .UserRole "moderator") (eq .UserRole "admin")) (not .IsApproved) }}
+                                <form method="post" action="/approve_comment">
+                                    <input type="hidden" name="commentId" value="{{.CommentID}}">
+                                    <button  type="submit">Approve Comment</button>
+                                </form>
+                                <br>
+                                <br>
+                            {{end}}
                         </div>
+                        {{end}}
                         {{end}}
 
                     

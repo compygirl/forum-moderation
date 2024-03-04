@@ -24,6 +24,7 @@ func (cmtObj *CommentServiceImpl) CreateComment(comment *models.Comment) (int, i
 	comment.CreatedTime = time.Now()
 	comment.LikesCounter = 0
 	comment.DislikeCounter = 0
+	comment.IsApproved = 0
 
 	id, err := cmtObj.repo.CreateCommentRepo(comment)
 	if err != nil {
@@ -106,6 +107,14 @@ func (cmtObj *CommentServiceImpl) DeleteAllCommentVotesByCommentID(commentID int
 
 func (cmtObj *CommentServiceImpl) DeleteCommentByCommentID(commentID int) error {
 	err := cmtObj.repo.DeleteCommentByCommentID(commentID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (cmtObj *CommentServiceImpl) ApproveComment(commentID int) error {
+	err := cmtObj.repo.UpdateIsApproveCommentStatus(commentID)
 	if err != nil {
 		return err
 	}

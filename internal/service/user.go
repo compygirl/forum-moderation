@@ -171,10 +171,13 @@ func (userObj *UserServiceImpl) GetSession(token string) (*models.Session, error
 func (userObj *UserServiceImpl) ExtendSessionTimeout(token string) (time.Time, error) {
 	session, err := userObj.repo.GetSessionByToken(token)
 	if session == nil || err != nil {
+		fmt.Println("ExtendSessionTimeout: Problem with getting session")
 		return time.Time{}, err
 	}
 	session.ExpTime = session.ExpTime.Add(1 * time.Minute)
 	if err = userObj.repo.UpdateSession(session); err != nil {
+		fmt.Println("ExtendSessionTimeout: Problem with update session")
+
 		return time.Time{}, err
 	}
 

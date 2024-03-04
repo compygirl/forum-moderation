@@ -57,7 +57,12 @@ func (h *Handler) CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 			post.ImagePath = path
 		}
 		//=============================================================
-		statusCode, postId, err := h.service.PostServiceInterface.CreatePost(post)
+		user, err := h.service.UserServiceInterface.GetUserByUserID(post.UserID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("UserService couldn't get user"))
+			return
+		}
+		statusCode, postId, err := h.service.PostServiceInterface.CreatePost(post, user.Role)
 		post.PostID = postId
 		if err != nil {
 			helpers.ErrorHandler(w, statusCode, err)
@@ -272,5 +277,48 @@ func (h *Handler) DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		helpers.ErrorHandler(w, http.StatusMethodNotAllowed, errors.New("Error in Post Handler"))
 		return
+	}
+}
+
+func (h *Handler) ApprovePostHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		cookie := helpers.SessionCookieGet(r)
+		if cookie == nil {
+			helpers.ErrorHandler(w, http.StatusUnauthorized, errors.New("Cookie cannot be reseived in ApprovePostHandler"))
+			return
+		}
+
+		expTime, err := h.service.UserServiceInterface.ExtendSessionTimeout(cookie.Value)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("Cookie cannot be extended in Approval of the Post"))
+			return
+		}
+
+		err = helpers.SessionCookieExtend(r, w, expTime)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		postID := r.FormValue("postId")
+		intPostID, err := strconv.Atoi(postID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		err = h.service.PostServiceInterface.ApprovePost(intPostID)
+		if err != nil {
+			helpers.ErrorHandler(w, http.StatusInternalServerError, errors.New("failed when was deleting the votes for posts"))
+			return
+		}
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	default:
+		helpers.ErrorHandler(w, http.StatusMethodNotAllowed, errors.New("Error in Moderator Request Handler"))
+		return
+
 	}
 }

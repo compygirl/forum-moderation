@@ -119,7 +119,7 @@ type Comment struct {
 	LikesCounter      int
 	DislikeCounter    int
 	UserRole          string
-	// IsApproved        int
+	IsApproved        int
 }
 
 type Database struct {

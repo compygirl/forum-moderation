@@ -39,6 +39,7 @@ type PostRepoInterface interface {
 	DeletePostByID(int) error
 	DeletePostCategoryByPostID(int) error
 	DeleteAllPostVotesByPostID(int) error
+	UpdateIsApprovePostStatus(int) error
 }
 
 type CommentRepoInterface interface {
@@ -54,6 +55,7 @@ type CommentRepoInterface interface {
 	DeleteAllCommentVotesByPostID(int) error
 	DeleteAllCommentVotesByCommentID(int) error
 	DeleteCommentByCommentID(int) error
+	UpdateIsApproveCommentStatus(int) error
 }
 
 type Repository struct {
