@@ -1,0 +1,100 @@
+basePath: /
+definitions:
+  models.ErrorResponse:
+    properties:
+      errorMessage:
+        type: string
+      errorNum:
+        type: integer
+    type: object
+host: https://localhost:8082
+info:
+  contact: {}
+  description: This is a sample forum API server written in Go.
+  title: Forum API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Authenticate user credentials and set session cookie
+      parameters:
+      - description: User email
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: Admin flag ('on' if admin)
+        in: formData
+        name: admin
+        type: string
+      produces:
+      - text/html
+      responses:
+        "302":
+          description: Redirects to /admin_page or / on success
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Log in a user
+      tags:
+      - auth
+  /registration:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Handles user registration form submission and user creation
+      parameters:
+      - description: First Name
+        in: formData
+        name: firstName
+        required: true
+        type: string
+      - description: Second Name
+        in: formData
+        name: secondName
+        required: true
+        type: string
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Email Address
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: Admin flag ('on' if admin)
+        in: formData
+        name: admin
+        type: string
+      produces:
+      - text/html
+      responses:
+        "302":
+          description: Redirects to /login on success
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - auth
+swagger: "2.0"

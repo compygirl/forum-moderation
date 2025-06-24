@@ -1,3 +1,9 @@
+// @title Forum API
+// @version 1.0
+// @description This is a sample forum API server written in Go.
+// @host https://localhost:8082
+// @BasePath /
+
 package main
 
 import (
@@ -10,7 +16,7 @@ import (
 )
 
 func main() {
-	configObj := config.CreateConfig() // new config was created with port 8080
+	configObj := config.CreateConfig() // new config was created with port 8082
 	if err := config.ReadConfig("cmd/config/Config.json", configObj); err != nil {
 		log.Fatal(err)
 	}

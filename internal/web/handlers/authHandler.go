@@ -10,6 +10,22 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// RegistrationHandler handles user registration page and form submission
+// @Summary      Register a new user
+// @Description  Handles user registration form submission and user creation
+// @Tags         auth
+// @Accept       application/x-www-form-urlencoded
+// @Produce      text/html
+// @Param        firstName   formData  string  true  "First Name"
+// @Param        secondName  formData  string  true  "Second Name"
+// @Param        username    formData  string  true  "Username"
+// @Param        email       formData  string  true  "Email Address"
+// @Param        password    formData  string  true  "Password"
+// @Param        admin       formData  string  false "Admin flag ('on' if admin)"
+// @Success      302  "Redirects to /login on success"
+// @Failure      405  {object} models.ErrorResponse
+// @Failure      500  {object} models.ErrorResponse
+// @Router       /registration [post]
 func (h *Handler) RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	registerPath := "internal/web/templates/registration.html"
 
@@ -51,6 +67,18 @@ func (h *Handler) RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// LoginHandler handles user login page and authentication
+// @Summary      Log in a user
+// @Description  Authenticate user credentials and set session cookie
+// @Tags         auth
+// @Accept       application/x-www-form-urlencoded
+// @Produce      text/html
+// @Param        email   formData  string  true  "User email"
+// @Param        password formData string  true  "Password"
+// @Param        admin    formData string  false "Admin flag ('on' if admin)"
+// @Success      302 "Redirects to /admin_page or / on success"
+// @Failure      403 {object} models.ErrorResponse
+// @Router       /login [post]
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	loginPath := "internal/web/templates/login.html"
 
@@ -72,6 +100,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			helpers.ErrorHandler(w, http.StatusForbidden, err)
 			return
 		} // else {
+		fmt.Println("password was correct")
 
 		helpers.SessionCookieSet(w, session.Token, session.ExpTime)
 		// fmt.Println("ADMING AFTER: ", admin)

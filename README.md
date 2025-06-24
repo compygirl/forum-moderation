@@ -96,7 +96,7 @@ docker build -t forum .
 
 Run Docker
 ```CMD/Terminal 
-docker run --name=forum -p 8080:8080 --rm -d forum
+docker run --name=forum -p 8082:8082 --rm -d forum
 ```
 
 Check Running Container
@@ -135,7 +135,7 @@ go run cmd/main.go
 
 Follow the link on the terminal:
 ```CMD/Terminal 
-Starting server got testing... https://localhost:8080 
+Starting server got testing... https://localhost:8082 
 ```
 
 you can play with the page
